@@ -19,52 +19,45 @@
     - physical restraint, seclusion, or mobility restrictions
     - end-of-life or DNR decisions
     - safety-authority overrides (complaint investigation, license
-      enforcement, compliance actions)"
+      enforcement, compliance actions)
 
   Three HARD checks, ALL permanent, un-overridable by any human
   approval:
 
     1. Resident unverified      -- the target resident record must
                                    exist AND be independently
-                                   confirmed `:registered?`/
-                                   `:verified?` in the store before
-                                   ANY proposal for it may commit or
-                                   even escalate. Never trusts a
-                                   proposal's own claim about the
-                                   resident -- re-derived from the
-                                   resident's own store record, the same
-                                   'ground truth, not self-report'
+                                   confirmed :registered?/:verified?
+                                   in the store before ANY proposal
+                                   for it may commit or even escalate.
+                                   Never trusts a proposal's own claim
+                                   about the resident -- re-derived from
+                                   the resident's own store record, the
+                                   same 'ground truth, not self-report'
                                    discipline every sibling actor's
                                    governor uses.
-    2. Effect not :propose      -- every proposal's `:effect` MUST
-                                   be `:propose`. Any other effect
-                                   value is, by construction, a
-                                   claim to directly actuate/commit
-                                   outside governance -- HARD block,
-                                   not merely low-confidence.
+    2. Effect not :propose      -- every proposal's :effect MUST
+                                   be :propose. Any other effect value
+                                   is, by construction, a claim to
+                                   directly actuate/commit outside
+                                   governance -- HARD block, not merely
+                                   low-confidence.
     3. Scope exclusion          -- ANY proposal (regardless of op)
                                    whose op, rationale, summary,
                                    citations or draft value touches
-                                   medication/pharmaceutical/nursing-assessment/
-                                   clinical-diagnosis/care-plan/wound-care/IV/
-                                   catheter/vital-signs/restraint/end-of-life/
-                                   safety-authority territory is a HARD,
-                                   PERMANENT block -- this actor's charter
-                                   excludes that territory structurally, not as a
-                                   rollout milestone. Evaluated UNCONDITIONALLY
-                                   on every proposal. Skilled nursing is
-                                   clinically adjacent, so EXTRA-CONSERVATIVE
-                                   scope exclusions apply. An op outside the
-                                   closed five-op allowlist is the SAME failure
-                                   mode (an advisor proposing something it was
-                                   never authorized to propose) and is folded
-                                   into this same check.
+                                   medication/pharmaceutical/nursing-
+                                   assessment/clinical-diagnosis/care-
+                                   plan/wound-care/IV/catheter/vital-
+                                   signs/restraint/end-of-life/safety-
+                                   authority territory is a HARD,
+                                   PERMANENT block. Skilled nursing is
+                                   clinically adjacent, so EXTRA-
+                                   CONSERVATIVE scope exclusions apply.
 
   One ESCALATE (SOFT) gate: LLM confidence below the floor, OR the op
-  is `:flag-safety-concern` -- ALWAYS escalates to a human, regardless
+  is :flag-safety-concern -- ALWAYS escalates to a human, regardless
   of confidence, regardless of how clean the proposal otherwise is.
-  `nursingcareops.phase` independently agrees: `:flag-safety-concern` is
-  never a member of any phase's `:auto` set either -- two layers, not
+  `nursingcareops.phase` independently agrees: :flag-safety-concern is
+  never a member of any phase's :auto set either -- two layers, not
   one."
   (:require [clojure.string :as str]
             [nursingcareops.store :as store]))
@@ -93,8 +86,8 @@
   ["medicatio" "薬" "dosing" "処方" "prescription" "rx" "pharma" "drug"
    "iv fluid" "infusion" "inject" "intravenous" "subcutaneous"
    ;; Nursing assessment & clinical diagnosis
-   "nursing assessment" "nursing-assessment" "nursing assessment" "clinical diagnosis"
-   "clinical-diagnosis" "臨床診断" "assessment note" "vital sign" "vital-sign" "vitals"
+   "nursing assessment" "nursing-assessment" "clinical assessment" "clinical diagnosis"
+   "clinical-diagnosis" "臨床診断" "assessment" "vital sign" "vital-sign" "vitals" "diagnos"
    "blood pressure" "bp reading" "heart rate" "respiration" "temperature" "temp"
    "blood glucose" "glucose monitoring" "o2 saturation" "oxygen sat"
    ;; Care plan & treatment decisions

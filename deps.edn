@@ -7,7 +7,7 @@
          {:local/root "../../kotoba-lang/langgraph"}
          io.github.kotoba-lang/langchain
          {:local/root "../../kotoba-lang/langchain"}}}
-  :run {:main-opts ["-m" "eldercareops.sim"]}
+  :run {:main-opts ["-m" "nursingcareops.sim"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}}

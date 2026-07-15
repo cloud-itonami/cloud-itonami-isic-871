@@ -20,7 +20,7 @@
   un-implemented. `nursingcareops.governor`'s `scope-exclusion-violations`
   independently re-scans every proposal for exactly this failure mode
   (a compromised or confused advisor drifting into scope it must never
-  touch) and HARD-holds it, regardless of confidence or op."
+  touch) and HARD-holds it, regardless of confidence or op.
 
   Like every sibling actor's advisor, this is a deterministic mock so
   the actor graph runs offline and the governor contract is exercised

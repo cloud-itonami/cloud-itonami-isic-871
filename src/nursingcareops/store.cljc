@@ -11,7 +11,7 @@
   diagnosis, care-plan modifications, wound care, IV/catheter management,
   vital signs monitoring, physical restraint decisions, end-of-life/DNR
   decisions, or any safety-authority override -- see `nursingcareops.governor`'s
-  `scope-exclusion-violations`, a HARD, permanent, un-overridable block."
+  `scope-exclusion-violations`, a HARD, permanent, un-overridable block.
 
   `MemStore` -- atom of EDN. The deterministic default for dev/tests/demo
   (no deps). A `residents` directory keyed by `:resident-id` STRING (never a
