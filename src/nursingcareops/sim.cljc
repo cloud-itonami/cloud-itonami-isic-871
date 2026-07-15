@@ -1,0 +1,85 @@
+(ns nursingcareops.sim
+  "Demo driver -- `clojure -M:run`. Walks a clean care-note logging
+  request through intake -> advise -> govern -> decide -> approval ->
+  commit at phase 1 (assisted-logging, always approval), then re-runs
+  the same op at phase 3 (supervised-auto, clean + high confidence ->
+  auto-commit), then a family-visit-scheduling request, supply-request
+  coordination, and staff-shift-proposal (all auto-commit clean at
+  phase 3), then a safety-concern flag (ALWAYS escalates, at any phase
+  -- approve, then commit), then HARD-hold scenarios: an unregistered
+  resident, a resident registered but not yet verified, a proposal
+  whose own `:effect` is not `:propose`, and a proposal that has
+  drifted into the permanently-excluded medication/clinical-diagnosis
+  scope."
+  (:require [langgraph.graph :as g]
+            [nursingcareops.advisor :as advisor]
+            [nursingcareops.store :as store]
+            [nursingcareops.operation :as op]))
+
+(defn- exec-op [actor tid request context]
+  (g/run* actor {:request request :context context} {:thread-id tid}))
+
+(defn- approve! [actor tid]
+  (g/run* actor {:approval {:status :approved :by "care-coordinator-1"}} {:thread-id tid :resume? true}))
+
+(defn -main [& _]
+  (let [db (store/seed-db)
+        coordinator-phase-1 {:actor-id "coord-1" :actor-role :care-coordinator :phase 1}
+        coordinator-phase-3 {:actor-id "coord-1" :actor-role :care-coordinator :phase 3}
+        actor (op/build db)]
+
+    (println "== log-care-note resident-1 (phase 1, escalates -- human approves) ==")
+    (let [r (exec-op actor "t1" {:op :log-resident-note :resident-id "resident-1"
+                                  :patch {:meal "lunch eaten" :mood "cheerful" :activity "art class"}} coordinator-phase-1)]
+      (println r)
+      (println "-- human care coordinator approves --")
+      (println (approve! actor "t1")))
+
+    (println "\n== log-care-note resident-1 (phase 3, clean -- auto-commits) ==")
+    (println (exec-op actor "t2" {:op :log-resident-note :resident-id "resident-1"
+                                  :patch {:meal "dinner eaten" :mood "calm" :activity "card game"}} coordinator-phase-3))
+
+    (println "\n== schedule-family-visit resident-1 (phase 3, clean -- auto-commits) ==")
+    (println (exec-op actor "t3" {:op :schedule-family-or-guardian-visit :resident-id "resident-1"
+                                  :patch {:visitor-name "daughter Sarah" :date "2026-07-20" :time "14:00"}} coordinator-phase-3))
+
+    (println "\n== coordinate-supply-request resident-1 (phase 3, clean -- auto-commits) ==")
+    (println (exec-op actor "t4" {:op :coordinate-supply-request :resident-id "resident-1"
+                                  :patch {:item "bed linens" :quantity 2 :urgency "routine"}} coordinator-phase-3))
+
+    (println "\n== schedule-staff-shift-proposal resident-1 (phase 3, clean -- auto-commits) ==")
+    (println (exec-op actor "t5" {:op :schedule-staff-shift-proposal :resident-id "resident-1"
+                                  :patch {:caregiver "nurse tech Chen" :shift "morning" :date "2026-07-21"}} coordinator-phase-3))
+
+    (println "\n== flag-safety-concern resident-1 (ALWAYS escalates, even at phase 3) ==")
+    (let [r (exec-op actor "t6" {:op :flag-safety-concern :resident-id "resident-1"
+                                 :patch {:concern "resident reported loss of balance near bathroom" :confidence 0.92}} coordinator-phase-3)]
+      (println r)
+      (println "-- human care coordinator reviews & approves --")
+      (println (approve! actor "t6")))
+
+    (println "\n== log-care-note resident-99 (unregistered resident -> HARD hold) ==")
+    (println (exec-op actor "t7" {:op :log-resident-note :resident-id "resident-99"
+                                  :patch {:meal "breakfast" :mood "unknown"}} coordinator-phase-3))
+
+    (println "\n== log-care-note resident-3 (registered but unverified -> HARD hold) ==")
+    (println (exec-op actor "t8" {:op :log-resident-note :resident-id "resident-3"
+                                  :patch {:meal "breakfast" :mood "calm"}} coordinator-phase-3))
+
+    (println "\n== schedule-family-visit resident-1, advisor attempts direct actuation (:effect :commit) -> HARD hold ==")
+    (let [actor-direct (op/build db {:advisor (reify advisor/Advisor
+                                                (-advise [_ _ req]
+                                                  (assoc (advisor/infer nil req) :effect :commit)))})]
+      (println (exec-op actor-direct "t9" {:op :schedule-family-or-guardian-visit :resident-id "resident-1"
+                                           :patch {:visitor-name "son" :date "2026-07-22"}} coordinator-phase-3)))
+
+    (println "\n== log-care-note resident-1, advisor drifts into medication/clinical scope -> HARD hold, permanent ==")
+    (println (exec-op actor "t10" {:op :log-resident-note :resident-id "resident-1"
+                                   :out-of-scope? true
+                                   :patch {}} coordinator-phase-3))
+
+    (println "\n== audit ledger ==")
+    (doseq [f (store/ledger db)] (println f))
+
+    (println "\n== committed coordination log ==")
+    (doseq [r (store/coordination-log db)] (println r))))

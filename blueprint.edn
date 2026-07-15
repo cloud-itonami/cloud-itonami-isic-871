@@ -1,0 +1,12 @@
+[{:itonami.blueprint/id "cloud-itonami-isic-871"
+  :itonami.blueprint/name "Residential Nursing Care Facilities"
+  :itonami.blueprint/isic-rev4 "871"
+  :itonami.blueprint/domain :services/skilled-nursing-care
+  :itonami.blueprint/license "AGPL-3.0-or-later"
+  :itonami.blueprint/social-impact [:dignity-and-autonomy :person-centered-care :family-engagement :safety-and-wellbeing :post-acute-care]
+  :itonami.blueprint/governor :nursing-care-governor
+  :itonami.blueprint/robotics false
+  :itonami.blueprint/required-technologies [:identity :forms :dmn :bpmn :audit-ledger]
+  :itonami.blueprint/status :public-oss
+  :itonami.blueprint/maturity :implemented
+  :db/id -1}]
