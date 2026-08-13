@@ -1,6 +1,15 @@
 {:paths ["src"]
  :deps {io.github.kotoba-lang/langgraph
-        {:git/sha "a332a770a0d2b5193f81b54483bb954fb29ef8d7"}}
+        {:git/sha "a332a770a0d2b5193f81b54483bb954fb29ef8d7"}
+        ;; jp-go-dds (デジタル庁デザインシステム) -- the workspace's BASE
+        ;; design system (root CLAUDE.md, 2026-08-05). `nursingcareops.render-html`
+        ;; inlines `jp-go-dds.skin/dds+skin` into the generated operator console
+        ;; so the page has no external stylesheet fetch. Git coordinate (not
+        ;; :local/root) so the render-html build also works in a standalone
+        ;; fork outside the monorepo checkout.
+        io.github.kotoba-lang/jp-go-digital-design-system
+        {:git/url "https://github.com/kotoba-lang/jp-go-digital-design-system"
+         :git/sha "83db99546eabc53613ae826ea41d1533a3c574af"}}
  :aliases
  {:dev {:override-deps
         {io.github.kotoba-lang/langgraph
@@ -8,6 +17,11 @@
          io.github.kotoba-lang/langchain
          {:local/root "../../kotoba-lang/langchain"}}}
   :run {:main-opts ["-m" "nursingcareops.sim"]}
+  ;; clojure -M:dev:render-html [out-file] -> regenerate
+  ;; docs/samples/operator-console.html through the REAL actor stack
+  ;; (flagship checklist item 2, ADR-2607189300). Throws if the run
+  ;; produces no HARD governor hold -- see nursingcareops.render-html.
+  :render-html {:main-opts ["-m" "nursingcareops.render-html"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
