@@ -49,7 +49,7 @@
   `-main` THROWS if the run produced no HARD governor hold -- a console
   that shows no real hold is not evidence of a governor. Precedent:
   cloud-itonami-isic-2513."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [jp-go-dds.skin]
             [langgraph.graph :as g]
             [nursingcareops.advisor :as advisor]
@@ -511,7 +511,7 @@
                           carried (->> [[:summary (:summary p)] [:rationale (:rationale p)]
                                         [:value (sorted-map-str (:value p))] [:op (str (:op p))]]
                                        (filter (fn [[_ v]]
-                                                 (let [lv (str/lower-case (str v))]
+                                                 (let [lv (str/lower (str v))]
                                                    (some #(str/includes? lv %) ms))))
                                        (map (comp #(code (str ":" (name %))) first)))]
                       (row (code id)
