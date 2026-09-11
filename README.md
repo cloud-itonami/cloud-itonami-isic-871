@@ -44,13 +44,13 @@ All modules are `.cljc` (portable across Clojure/ClojureScript/nbb). Tests run o
 
 ```bash
 # Run full test suite
-clojure -M:test
+kbb -M:test
 
 # Run lint
-clojure -M:lint
+kbb -M:lint
 
 # Run demo/simulation
-clojure -M:run
+kbb -M:run
 ```
 
 ## License
