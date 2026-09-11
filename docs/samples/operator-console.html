@@ -2478,7 +2478,7 @@ img,svg { max-width: 100%; height: auto; }</style>
   <section class="card">
     <h2>What this page is</h2>
     <p>This actor coordinates the BACK OFFICE of a skilled nursing facility &mdash; resident-note logging, family/guardian visit scheduling, non-medication supply coordination, staff shift proposals and safety-concern flagging. It never administers medication, never performs nursing assessment or clinical diagnosis, never modifies a care plan, never touches wound/IV/catheter care, vital signs, physical restraint or end-of-life decisions, and never overrides a safety authority. Those are permanent HARD blocks in <code>nursingcareops.governor</code>, not unimplemented features.</p>
-    <p class="muted">Regenerate with <code>clojure -M:dev:render-html</code>. The generator drives the real actor stack and <strong>throws</strong> if the run produces no HARD governor hold, so this page cannot silently decay into a mock. It is deterministic: no clock, no randomness, no network, and payload maps are rendered key-sorted, so two consecutive runs are byte-identical.</p>
+    <p class="muted">Regenerate with <code>kbb -M:dev:render-html</code>. The generator drives the real actor stack and <strong>throws</strong> if the run produces no HARD governor hold, so this page cannot silently decay into a mock. It is deterministic: no clock, no randomness, no network, and payload maps are rendered key-sorted, so two consecutive runs are byte-identical.</p>
   </section>
   <section class="card">
     <h2>Resident directory (seeded ground truth)</h2>

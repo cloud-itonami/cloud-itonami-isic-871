@@ -43,7 +43,7 @@
   dependence (payload maps are rendered key-sorted). Re-running writes a
   byte-identical file.
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`).
 
   `-main` THROWS if the run produced no HARD governor hold -- a console
@@ -656,7 +656,7 @@
      "care, vital signs, physical restraint or end-of-life decisions, and never overrides a safety "
      "authority. Those are permanent HARD blocks in <code>nursingcareops.governor</code>, not "
      "unimplemented features.</p>\n"
-     "    <p class=\"muted\">Regenerate with <code>clojure -M:dev:render-html</code>. The generator drives the "
+     "    <p class=\"muted\">Regenerate with <code>kbb -M:dev:render-html</code>. The generator drives the "
      "real actor stack and <strong>throws</strong> if the run produces no HARD governor hold, so this "
      "page cannot silently decay into a mock. It is deterministic: no clock, no randomness, no network, "
      "and payload maps are rendered key-sorted, so two consecutive runs are byte-identical.</p>\n"
